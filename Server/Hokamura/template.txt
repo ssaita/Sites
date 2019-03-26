@@ -1,0 +1,42 @@
+//SQLサーバにログイン
+/usr/local/mysql/bin/mysql --local-infile=1 -v -uroot -pomvoo7gc
+
+//データベースを作成する
+CREATE DATABASE testkk;
+
+//データベースを選択する
+USE testkk;
+
+//テーブルを作成する
+CREATE TABLE goods(
+    date DATETIME NOT NULL,
+    doi SMALLINT NOT NULL,
+    x DECIMAL(7,2) NOT NULL,
+    y DECIMAL(6,2) NOT NULL,
+    z DECIMAL(7,2) NOT NULL,
+    f DECIMAL(7,2) NOT NULL,
+    PRIMARY KEY (date))
+    ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+//mysqlを立ち上げる
+/usr/local/mysql/bin/mysql --local-infile=1 -v -uroot -p
+
+//CSVファイルを取り込みたいとき
+# mysqlプロンプトから
+load data local infile "./kak20181101sec.csv " into table goods fields terminated by ',' optionally enclosed by '"';
+load data local infile "./kak20181102sec.csv " into table goods fields terminated by ',' optionally enclosed by '"';
+$ コマンドプロンプトから
+>mysqlimport -hlocalhost -uroot -pomvoo7gc testkk --fields-terminated-by=',' --fields-enclosed-by='"' --local 'goods.20181101kak.csv' 'goods.20181102kak.csv'
+
+*ERROR 1148 (42000): The used command is not allowed with this MySQL version
+が発生したときは以下のURLをさんこうにする。
+https://yoku0825.blogspot.com/2018/07/mysql-80load-data-local-infile-error.html
+
+//SELECT @@local_infile;
+//SET PERSIST local_infile= 1;
+//SELECT @@local_infile;
+
+//テーブルを削除したいとき
+DROP TABLE testkk.goods;
+
+//データベースに接続したいとき
