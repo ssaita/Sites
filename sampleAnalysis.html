@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<!--*****参考URL*****https://plot.ly/javascript/horizontal-bar-charts/-->
+<html lang="ja">
+<head>
+	<meta charset="utf-8"/>
+	<!-- Plotly.js -->
+	<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+	<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
+</head>
+
+<style>
+	div.SET{
+		float: left;
+		width: 20%;
+	}
+	div.VISUALIZATION{
+		float: left;
+		width: 80%;
+	}
+	div.KESSON{
+		float: left;
+		width: 100%;
+	}
+	div.ANALYSIS_SET{
+		float: left;
+		width: 100%;
+	}
+	div.FRONT{
+		height: 300px;
+	}
+	div.RAW{
+		float: left;
+		width: 100%;
+	}
+	div.ANALYSIS{
+		float: left;
+		width: 50%;
+	}
+
+</style>
+
+<body>
+
+	<div class = "SET">
+		<!--　データタイプ用　-->
+		<select id="selectDataType"></select>
+		<div id="map"></div>									<!--　観測地　-->
+		<input type="text" name="datetimes" id="dates">			<!--　日付　-->
+		<input type="button" name="run" value="実行する" id="runButton">	<!--　実行ボタン　-->
+		<div id="mapText"></div>
+	</div>
+
+	<div class = "VISUALIZATION">
+		<!--- <div class = "FRONT">
+			<div class ="KESSON" id="KESSON"> </div>
+			<div class ="ANALYSIS_SET">
+				<select id="selectAnalysisType"></select>
+				<input type="button" name="analysis" value="解析する" id="analysisButton">
+			</div>
+		</div> -->
+
+		<div class = "BACK">
+			<div class="RAW" id="XYZF"> </div>
+			<div class="ANALYSIS" id="Analysis"> </div>
+		</div>
+	</div>
+
+
+	<script  type="text/javascript" src="Config/ALL_config.js"> </script>
+	<script  type="text/javascript" src="Config/ALL_dataBase.js"> </script>
+	<script  type="text/javascript" src="Config/ALL_modebar.js"> </script>
+	<script  type="text/javascript" src="Config/M_trace-layout.js"> </script>
+	<script  type="text/javascript" src="Config/X_trace-layout.js"> </script>
+	<script  type="text/javascript" src="Functions/Plot/new_plot.js"> </script>
+	<script  type="text/javascript" src="Functions/Plot/restyle_plot.js"> </script>
+	<script  type="text/javascript" src="Functions/calculate.js"> </script>
+	<script  type="text/javascript" src="Functions/dateFunc.js"> </script>
+	<script  type="text/javascript" src="Functions/Functions.js"> </script>
+
+
+	<script>
+	//---------------解析タイプの設定---------------
+	// let selectElementOfAnalysis = document.getElementById("selectAnalysisType");
+	// for(let i = 0; i < ANALYSISTYPE_LIST.length; i++){
+	// 	let option = document.createElement("option");
+	// 	option.value = ANALYSISTYPE_LIST[i];
+	// 	option.innerText = ANALYSISTYPE_LIST_TEXT[i];
+	// 	selectElementOfAnalysis.appendChild(option);
+	// }
+
+
+	Plotly.d3.csv("./Sample/DataBox/fft.csv", function(err, rows){
+      function unpack(rows, key) {
+      return rows.map(function(row) { return row[key]; });
+    }
+
+    var trace1 = {
+	  xaxis: 'x',
+	  yaxis: 'y4',
+      type: "scatter",
+      mode: "lines",
+      name: 'fft X',
+      x: unpack(rows, 'frequency'),
+      y: unpack(rows, 'KAKX'),
+      line: {color: '#17BECF'}
+    }
+
+    var trace2 = {
+	  xaxis: 'x',
+  	  yaxis: 'y3',
+      type: "scatter",
+      mode: "lines",
+      name: 'fft Y',
+      x: unpack(rows, 'frequency'),
+      y: unpack(rows, 'KAKY'),
+      line: {color: '#7F7F7F'}
+    }
+
+    var trace3 = {
+	  xaxis: 'x',
+  	  yaxis: 'y2',
+	  type: "scatter",
+      mode: "lines",
+      name: 'fft Z',
+      x: unpack(rows, 'frequency'),
+      y: unpack(rows, 'KAKZ'),
+      line: {color: 'rgb(219, 64, 82)'}
+    }
+
+    var trace4 = {
+	  xaxis: 'x',
+  	  yaxis: 'y1',
+	  type: "scatter",
+      mode: "lines",
+      name: 'fft F',
+      x: unpack(rows, 'frequency'),
+      y: unpack(rows, 'KAKF'),
+      line: {color: 'rgb(68, 255, 113)'}
+    }
+
+    var trace = [trace1,trace2,trace3,trace4];
+
+	var layout = {
+	  title: 'Analysis',
+	  //width: 800,
+	  height: 800,
+	  dragmode: 'pan',
+	  yaxis1: {
+		title: 'F',
+		type: 'log',
+		domain: [0.0, 0.25],
+		zeroline: false,
+		showline: false,
+		exponentformat: 'none'
+	  },
+	  yaxis2: {
+		title: 'Z',
+		type: 'log',
+		domain: [0.25, 0.5],
+		zeroline: false,
+		showline: false,
+		exponentformat: 'none'
+	  },
+	  yaxis3: {
+		title: 'Y',
+		type: 'log',
+		domain: [0.5, 0.75],
+		zeroline: false,
+		showline: false,
+		exponentformat: 'none'
+	  },
+	  yaxis4: {
+		title: 'X',
+		type: 'log',
+		domain: [0.75, 1.0],
+		zeroline: false,
+		showline: false,
+		exponentformat: 'none'
+	  },
+	  xaxis: {
+		//autorange: true,
+		//type: 'date',
+		//rangeselector: selectorOptions,
+		type: 'log',
+		rangeslider: {}
+	  }
+
+	};
+
+    // Plotly.newPlot('Analysis', trace, layout);
+    })
+
+	</script>
+
+	<script  type="text/javascript" src="Functions/main.js"> </script>
+
+</body>
